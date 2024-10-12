@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Edit Task</h2>
+    
+    <form method="POST" class="mt-4">
+        {{ form.hidden_tag() }}
+
+        <!-- Task Content -->
+        <div class="form-group">
+            {{ form.content.label(class='form-label') }}
+            {{ form.content(class='form-control', placeholder='Update your task') }}
+        </div>
+
+        <!-- Task Priority -->
+        <div class="form-group">
+            {{ form.priority.label(class='form-label') }}
+            {{ form.priority(class='form-control') }}  <!-- Priority dropdown -->
+        </div>
+
+        <!-- Due Date Field -->
+        <div class="form-group">
+            {{ form.due_date.label(class='form-label') }}  <!-- Label for due date -->
+            {{ form.due_date(class='form-control', placeholder='Select due date', type='date') }}  <!-- Due date input -->
+        </div>
+
+        <!-- Submit Button -->
+        {{ form.submit(class='btn btn-primary btn-interactive mt-3') }} <!-- Added btn-interactive class for hover effects -->
+
+        <!-- Display any flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </form>
+
+    <!-- Back to Tasks Button -->
+    <div class="text-center mt-3">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Tasks</a>
+    </div>
+</div>
+{% endblock %}

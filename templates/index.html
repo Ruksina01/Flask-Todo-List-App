@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Your Tasks</h1>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-warning" role="alert">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Logout Button -->
+    <form method="POST" action="{{ url_for('logout') }}" class="mb-4">
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+
+    <!-- Search and Filter Form -->
+    <form method="GET" action="{{ url_for('index') }}" class="mb-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search" placeholder="Search tasks" aria-label="Search tasks" value="{{ request.args.get('search', '') }}">
+            <select class="form-control" name="status">
+                <option value="">All Statuses</option>
+                <option value="True" {% if request.args.get('status') == 'True' %}selected{% endif %}>Completed</option>
+                <option value="False" {% if request.args.get('status') == 'False' %}selected{% endif %}>Pending</option>
+            </select>
+            <select class="form-control" name="priority">
+                <option value="">All Priorities</option>
+                <option value="High" {% if request.args.get('priority') == 'High' %}selected{% endif %}>High</option>
+                <option value="Medium" {% if request.args.get('priority') == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="Low" {% if request.args.get('priority') == 'Low' %}selected{% endif %}>Low</option>
+            </select>
+            <input type="date" class="form-control" name="due_date" placeholder="Due Date" value="{{ request.args.get('due_date', '') }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    <!-- Task Adding Form -->
+    <form method="POST" action="{{ url_for('add_task') }}" class="mb-4">
+        {{ form.hidden_tag() }}  <!-- CSRF protection -->
+        <div class="form-group">
+            {{ form.content.label(class='form-label') }}
+            {{ form.content(class='form-control', placeholder='Enter a new task') }}
+            {% for error in form.content.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.priority.label(class='form-label') }}
+            {{ form.priority(class='form-control') }}
+        </div>
+        <div class="form-group">
+            {{ form.due_date.label(class='form-label') }}
+            {{ form.due_date(class='form-control', placeholder='Select due date', type='date', value=datetime.today().date() | tojson | safe) }}  <!-- Set default to today's date -->
+            {% for error in form.due_date.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {{ form.submit(class='btn btn-primary') }}
+    </form>
+
+    <!-- Task List -->
+    <ul class="list-group">
+        {% for task in tasks %}
+            <li class="list-group-item d-flex justify-content-between align-items-center {% if task.completed %}list-group-item-success{% endif %}">
+                {% if task.completed %}
+                    <span class="text-decoration-line-through">{{ task.content }}</span> <!-- Strike through for completed tasks -->
+                    <span class="text-success">&#10003;</span> <!-- Checkmark for completed tasks -->
+                {% else %}
+                    {{ task.content }} 
+                {% endif %}
+                <div>
+                    <span class="badge {% if task.priority == 'High' %}bg-danger{% elif task.priority == 'Medium' %}bg-warning{% else %}bg-success{% endif %}">
+                        {{ task.priority }} <!-- Display priority with color coding -->
+                    </span>
+                    <span class="badge bg-info text-white ms-2">Due: {{ task.due_date.strftime('%Y-%m-%d') if task.due_date else 'No due date' }}</span> <!-- Display due date -->
+                    <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-success btn-sm">Done</a>
+                    <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger btn-sm">Remove</a>
+                </div>
+            </li>
+        {% else %}
+            <li class="list-group-item">No tasks available.</li> <!-- Message if no tasks -->
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
