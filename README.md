@@ -32,12 +32,11 @@ The To-Do List application is a web-based tool that allows users to manage their
 - **Flask-Login**: User session management.
 - **SQLite**: Lightweight database for storing user and task data.
 - **HTML/CSS**: For creating the user interface.
-- **Bootstrap**: For responsive design.
   
 **Login Page**
   ![Screenshot of To-Do List Application](https://github.com/Ruksina01/Flask-Todo-List-App/blob/main/images_output/todo1.png?raw=true)
 
-**Registeration Page**
+**Registration Page**
   ![Screenshot of To-Do List Application](https://github.com/Ruksina01/Flask-Todo-List-App/blob/main/images_output/todo3.png?raw=true)
 
 **Interface**
